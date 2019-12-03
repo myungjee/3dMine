@@ -1,3 +1,6 @@
 3dMinePuzzle/Library/
 3dMinePuzzle/Temp/
 3dMinePuzzle/obj/Debug/
+3dMinePuzzle/.vs/3dMinePuzzle/v15/
+*.csproj
+*.sln
