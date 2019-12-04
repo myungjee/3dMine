@@ -9,8 +9,11 @@ namespace cubepuzzle
     {
         [SerializeField]
         private GameObject cubePrefab;
+        private List<GameObject> columnParentObj = new List<GameObject>();
 
         private List<GameObject[]> cubeList = new List<GameObject[]>();
+        private GameObject parentGameObject;
+        private int currentLevel = 0;
 
         [SerializeField]
         private int numberOfCubesPerRow;
@@ -40,7 +43,7 @@ namespace cubepuzzle
         // generate cubes as a map
         private void GenerateCubes()
         {
-            GameObject parentGameObject = new GameObject();
+            parentGameObject = new GameObject();
             parentGameObject.name = "Cube Holder";
 
             // generate each column
@@ -50,6 +53,8 @@ namespace cubepuzzle
                 columnParent.transform.position = Vector3.zero;
                 columnParent.name = "Column" + k.ToString();
                 columnParent.transform.parent = parentGameObject.transform;
+
+                columnParentObj.Add(columnParent);
 
                 columnParent.SetActive(k < numberOfCubesPerRow);
 
@@ -65,8 +70,7 @@ namespace cubepuzzle
                         GameObject cube = Instantiate(cubePrefab);
                         cube.transform.parent = columnParent.transform;
                         cube.transform.localPosition = new Vector3(i - devideByHalf + rest, 0, j - devideByHalf + rest);
-
-                        Debug.Log("i : " + i + " truncate : " + devideByHalf + " rest : " + rest + " hm : " + (i - devideByHalf + rest));
+                        
                         oneColumn[i * 3 + j] = cube;
 
                         cubeList.Add(oneColumn);
@@ -75,9 +79,31 @@ namespace cubepuzzle
             }
         }
 
-        internal void MoveDown()
+        public void MoveDown()
         {
-            
+            if (currentLevel + 3f < columnParentObj.Count)
+            {
+                StartCoroutine(MoveCubesDown());
+                UpdateVisualization();
+                
+                currentLevel++;
+            }
+        }
+
+        private IEnumerator MoveCubesDown()
+        {
+            for (float time = 0; time < 1; time += Time.deltaTime)
+            {
+                parentGameObject.transform.position = new Vector3(0, currentLevel + time, 0);
+            }
+                
+            yield return null;
+        }
+
+        private void UpdateVisualization()
+        {
+            columnParentObj[currentLevel].SetActive(false);
+            columnParentObj[currentLevel + 3].SetActive(true);
         }
     }
 }
