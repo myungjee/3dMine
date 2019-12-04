@@ -8,7 +8,12 @@ namespace cubepuzzle
     public class CubeMaker : MonoBehaviour
     {
         [SerializeField]
-        private GameObject cubePrefab;
+        private GameObject normalCubePrefab;
+        [SerializeField]
+        private GameObject bombCubePrefab;
+        [SerializeField]
+        private GameObject goalCubePrefab;
+
         private List<GameObject> columnParentObj = new List<GameObject>();
 
         private List<GameObject[]> cubeList = new List<GameObject[]>();
@@ -66,8 +71,21 @@ namespace cubepuzzle
                     for (int j = 0; j < numberOfCubesPerRow; j++)
                     {
                         columnParent.transform.position = new Vector3(0, -k + numberOfCubesPerRow - 0.5f, 0);
+                        
+                        GameObject cube;
 
-                        GameObject cube = Instantiate(cubePrefab);
+                        if (k + 1 == numberOfColumn && i == 0 & j == 0)
+                        {
+                            cube = Instantiate(goalCubePrefab);
+                        }
+                        else if (UnityEngine.Random.value > 0.2f || (k == 0 && i + 1 == numberOfCubesPerRow && j + 1 == numberOfCubesPerRow))
+                        {
+                            cube = Instantiate(normalCubePrefab);
+                        }
+                        else
+                        {
+                            cube = Instantiate(bombCubePrefab);
+                        }
                         cube.transform.parent = columnParent.transform;
                         cube.transform.localPosition = new Vector3(i - devideByHalf + rest, 0, j - devideByHalf + rest);
                         
@@ -81,11 +99,11 @@ namespace cubepuzzle
 
         public void MoveDown()
         {
-            if (currentLevel + 3f < columnParentObj.Count)
+            if (currentLevel < columnParentObj.Count - 1)
             {
                 StartCoroutine(MoveCubesDown());
                 UpdateVisualization();
-                
+
                 currentLevel++;
             }
         }
@@ -96,14 +114,14 @@ namespace cubepuzzle
             {
                 parentGameObject.transform.position = new Vector3(0, currentLevel + time, 0);
             }
-                
+
             yield return null;
         }
 
         private void UpdateVisualization()
         {
             columnParentObj[currentLevel].SetActive(false);
-            columnParentObj[currentLevel + 3].SetActive(true);
+            columnParentObj[Mathf.Clamp(currentLevel + 3, 0, numberOfColumn - 1)].SetActive(true);
         }
     }
 }
