@@ -145,7 +145,7 @@ namespace cubepuzzle
         {
             for (int i = 0; i < cubeList.Length; i++)
             {
-                if (i != ((numberOfColumn - 1) * numberOfCubesPerRow * numberOfCubesPerRow))
+                if (i != ((numberOfColumn - 1) * numberOfCubesPerRow * numberOfCubesPerRow) && numberOfBomb[i] != 0)
                     cubeList[i].GetComponentInChildren<Text>().text = numberOfBomb[i].ToString();
             }
         }
@@ -179,12 +179,11 @@ namespace cubepuzzle
 
         public void UpdateRevealedCubes(int pos)
         {
-            Debug.Log(pos);
             if (pos < cubeList.Length)
             {
                 if (numberOfBomb[pos] == 0)
                 {
-                    var posY = Mathf.FloorToInt(pos / numberOfColumn);
+                    var posY = Mathf.FloorToInt(pos / (numberOfCubesPerRow * numberOfCubesPerRow));
                     var posX = Mathf.FloorToInt((pos - (posY * numberOfCubesPerRow * numberOfCubesPerRow)) / numberOfCubesPerRow);
                     var posZ = pos - (posY * numberOfCubesPerRow * numberOfCubesPerRow) - (posX * numberOfCubesPerRow);
 
