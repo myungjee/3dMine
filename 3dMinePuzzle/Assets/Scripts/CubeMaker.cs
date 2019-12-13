@@ -2,21 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace cubepuzzle
 {
-    public class CubeMaker : MonoBehaviour
+    public class CubeMaker : MonoBehaviour, ICubeMaker
     {
         [SerializeField]
-        private GameObject normalCubePrefab;
-        [SerializeField]
-        private GameObject bombCubePrefab;
+        private GameObject cube01;        
         [SerializeField]
         private GameObject goalCubePrefab;
-
+        [SerializeField]
+        private GameObject[] cubeList;
+        
         private List<GameObject> columnParentObj = new List<GameObject>();
 
-        private List<GameObject[]> cubeList = new List<GameObject[]>();
+        private int[] numberOfBomb;
         private GameObject parentGameObject;
         private int currentLevel = 0;
 
@@ -29,7 +30,17 @@ namespace cubepuzzle
         private float devideByHalf;
         private float rest;
 
-        public float Min;
+        public float Min { get; set; }
+
+        public int NumberOfCubesPerRow
+        {
+            get { return numberOfCubesPerRow; }
+        }
+
+        public int NumberOfColumn
+        {
+            get { return numberOfColumn; }
+        }
         
         void Awake()
         {
@@ -40,7 +51,7 @@ namespace cubepuzzle
             GenerateCubes();
         }
 
-        internal Vector3 StartingPosition()
+        public Vector3 StartingPosition()
         {
             return new Vector3((numberOfCubesPerRow - devideByHalf + rest - 1), numberOfCubesPerRow, (numberOfCubesPerRow - devideByHalf + rest - 1));
         }
@@ -50,6 +61,9 @@ namespace cubepuzzle
         {
             parentGameObject = new GameObject();
             parentGameObject.name = "Cube Holder";
+            var numberOfCubes = numberOfColumn * numberOfCubesPerRow * numberOfCubesPerRow;
+            cubeList = new GameObject[numberOfCubes];
+            numberOfBomb = new int[numberOfCubes];
 
             // generate each column
             for (int k = 0; k < numberOfColumn; k++)
@@ -63,15 +77,13 @@ namespace cubepuzzle
 
                 columnParent.SetActive(k < numberOfCubesPerRow);
 
-                GameObject[] oneColumn = new GameObject[numberOfCubesPerRow * numberOfCubesPerRow];
-
                 // generate each cube
                 for (int i = 0; i < numberOfCubesPerRow; i++)
                 {
                     for (int j = 0; j < numberOfCubesPerRow; j++)
                     {
                         columnParent.transform.position = new Vector3(0, -k + numberOfCubesPerRow - 0.5f, 0);
-                        
+
                         GameObject cube;
 
                         if (k + 1 == numberOfColumn && i == 0 & j == 0)
@@ -80,20 +92,46 @@ namespace cubepuzzle
                         }
                         else if (UnityEngine.Random.value > 0.2f || (k == 0 && i + 1 == numberOfCubesPerRow && j + 1 == numberOfCubesPerRow))
                         {
-                            cube = Instantiate(normalCubePrefab);
+                            cube = Instantiate(cube01);
                         }
                         else
                         {
-                            cube = Instantiate(bombCubePrefab);
+                            cube = Instantiate(cube01);
+                            cube.AddComponent<LosingCube>();
+                            if (j + 1 < numberOfCubesPerRow)
+                                numberOfBomb[(k * numberOfCubesPerRow * numberOfCubesPerRow) + (i * numberOfCubesPerRow) + j + 1] += 1;
+                            if (j > 0)
+                                numberOfBomb[(k * numberOfCubesPerRow * numberOfCubesPerRow) + (i * numberOfCubesPerRow) + j - 1] += 1;
+                            if (i + 1 < numberOfCubesPerRow)
+                                numberOfBomb[(k * numberOfCubesPerRow * numberOfCubesPerRow) + ((i + 1) * numberOfCubesPerRow) + j] += 1;
+                            if (i > 0)
+                                numberOfBomb[(k * numberOfCubesPerRow * numberOfCubesPerRow) + ((i - 1) * numberOfCubesPerRow) + j] += 1;
+                            if (k > 0)
+                            {
+                                numberOfBomb[((k - 1) * numberOfCubesPerRow * numberOfCubesPerRow) + (i * numberOfCubesPerRow) + j] += 1;
+                            }
+                            if (k + 1 < numberOfColumn)
+                            {
+                                numberOfBomb[((k + 1) * numberOfCubesPerRow * numberOfCubesPerRow) + (i * numberOfCubesPerRow) + j] += 1;
+                            }
                         }
                         cube.transform.parent = columnParent.transform;
                         cube.transform.localPosition = new Vector3(i - devideByHalf + rest, 0, j - devideByHalf + rest);
-                        
-                        oneColumn[i * 3 + j] = cube;
 
-                        cubeList.Add(oneColumn);
+                        cubeList[(k * numberOfCubesPerRow * numberOfCubesPerRow) + (i * numberOfCubesPerRow) + j] = cube;
                     }
                 }
+            }
+
+            VisualizeNumber();
+        }
+
+        private void VisualizeNumber()
+        {
+            for (int i = 0; i < cubeList.Length; i++)
+            {
+                if (i != ((numberOfColumn - 1) * numberOfCubesPerRow * numberOfCubesPerRow))
+                    cubeList[i].GetComponentInChildren<Text>().text = numberOfBomb[i].ToString();
             }
         }
 
