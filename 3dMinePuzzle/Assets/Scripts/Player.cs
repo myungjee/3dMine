@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 namespace cubepuzzle
 {
+    public enum Status { Normal, Lost, Won }
     public class Player : MonoBehaviour, IPlayer
     {
         public ReactiveProperty<int> CurrentPosition { get; set; }
