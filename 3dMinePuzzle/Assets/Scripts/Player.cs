@@ -10,7 +10,7 @@ namespace cubepuzzle
     public class Player : MonoBehaviour, IPlayer
     {
         public ReactiveProperty<int> CurrentPosition { get; set; }
-        public Status Stat = Status.Normal;
+        public Status Stat { get; set; } = Status.Normal;
 
         [SerializeField]
         private Text TextUI;
@@ -24,8 +24,7 @@ namespace cubepuzzle
             this.transform.position = cubeMaker.StartingPosition();
             CurrentPosition = new ReactiveProperty<int>();
 
-            CurrentPosition.Value = 8;
-            cubeMaker.UpdateRevealedCubes(CurrentPosition.Value);
+            CurrentPosition.Value = (cubeMaker.NumberOfCubesPerRow * cubeMaker.NumberOfCubesPerRow) - 1;
             Observable.EveryUpdate().Where(_ => Stat == Status.Normal && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))).Subscribe(_ => MoveLeft());
             Observable.EveryUpdate().Where(_ => Stat == Status.Normal && (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))).Subscribe(_ => MoveBack());
             Observable.EveryUpdate().Where(_ => Stat == Status.Normal && (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))).Subscribe(_ => MoveRight());
