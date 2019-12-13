@@ -191,63 +191,41 @@ namespace cubepuzzle
                     
                 if (posZ + 1 < numberOfCubesPerRow)
                 {
-                    var colorChange = cubeList[pos + 1].GetComponent<OnTriggerEnterColorChange>();
-                    colorChange.ColorChange();
-                    if (!colorChange.ColorChanged)
-                    {
-                        colorChange.ColorChanged = true;
-                        UpdateRevealedCubes(pos + 1);
-                    }
+                    OpenFurther(pos + 1);
                 }
                 if (posZ > 0)
                 {
-                    var colorChange = cubeList[pos - 1].GetComponent<OnTriggerEnterColorChange>();
-                    colorChange.ColorChange();
-                    if (!colorChange.ColorChanged)
-                    {
-                        colorChange.ColorChanged = true;
-                        UpdateRevealedCubes(pos - 1);
-                    }
+                    OpenFurther(pos - 1);
                 }
                 if (posX + 1 < numberOfCubesPerRow)
                 {
-                    var colorChange = cubeList[pos + numberOfCubesPerRow].GetComponent<OnTriggerEnterColorChange>();
-                    colorChange.ColorChange();
-                    if (!colorChange.ColorChanged)
-                    {
-                        colorChange.ColorChanged = true;
-                        UpdateRevealedCubes(pos + numberOfCubesPerRow);
-                    }
+                    OpenFurther(pos + numberOfCubesPerRow);
                 }
                 if (posX > 0)
                 {
-                    var colorChange = cubeList[pos - numberOfCubesPerRow].GetComponent<OnTriggerEnterColorChange>();
-                    colorChange.ColorChange();
-                    if (!colorChange.ColorChanged)
-                    {
-                        colorChange.ColorChanged = true;
-                        UpdateRevealedCubes(pos - numberOfCubesPerRow);
-                    }
+                    OpenFurther(pos - numberOfCubesPerRow);
                 }
                 if (posY > 0)
                 {
-                    var colorChange = cubeList[pos - (numberOfCubesPerRow * numberOfCubesPerRow)].GetComponent<OnTriggerEnterColorChange>();
-                    colorChange.ColorChange();
-                    if (!colorChange.ColorChanged)
-                    {
-                        colorChange.ColorChanged = true;
-                        UpdateRevealedCubes(pos - (numberOfCubesPerRow * numberOfCubesPerRow));
-                    }
+                    OpenFurther(pos - (numberOfCubesPerRow * numberOfCubesPerRow));
                 }
                 if (posY + 2 < numberOfColumn)
                 {
-                    var colorChange = cubeList[pos + (numberOfCubesPerRow * numberOfCubesPerRow)].GetComponent<OnTriggerEnterColorChange>();
-                    colorChange.ColorChange();
-                    if (!colorChange.ColorChanged)
-                    {
-                        colorChange.ColorChanged = true;
-                        UpdateRevealedCubes(pos + (numberOfCubesPerRow * numberOfCubesPerRow));
-                    }
+                    OpenFurther(pos + (numberOfCubesPerRow * numberOfCubesPerRow));
+                }
+            }
+        }
+
+        private void OpenFurther(int pos)
+        {
+            var colorChange = cubeList[pos].GetComponent<OnTriggerEnterColorChange>();
+            if (colorChange != null)
+            {
+                colorChange.ColorChange();
+                if (!colorChange.ColorChanged)
+                {
+                    colorChange.ColorChanged = true;
+                    UpdateRevealedCubes(pos);
                 }
             }
         }
