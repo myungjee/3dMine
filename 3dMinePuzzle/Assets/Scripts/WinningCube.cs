@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
-public class WinningCube : MonoBehaviour
+namespace cubepuzzle
 {
-    private Text text;
-
-    private void OnTriggerEnter(Collider other)
+    public class WinningCube : MonoBehaviour
     {
-        if (other.CompareTag("Player"))
-        {
-            text = GameObject.Find("TempUIText").GetComponent<Text>();
+        [Inject]
+        private GameStatusController status;
 
-            text.text = "You Won!";
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                other.GetComponent<Player>().Stat = Status.Won;
+            }
         }
     }
 }
