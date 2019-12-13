@@ -90,7 +90,7 @@ namespace cubepuzzle
                         {
                             cube = Instantiate(goalCubePrefab);
                         }
-                        else if (UnityEngine.Random.value > 0.2f || (k == 0 && i + 1 == numberOfCubesPerRow && j + 1 == numberOfCubesPerRow))
+                        else if (UnityEngine.Random.value > 0.1f || (k == 0 && i + 1 == numberOfCubesPerRow && j + 1 == numberOfCubesPerRow))
                         {
                             cube = Instantiate(cube01);
                         }
@@ -160,6 +160,34 @@ namespace cubepuzzle
         {
             columnParentObj[currentLevel].SetActive(false);
             columnParentObj[Mathf.Clamp(currentLevel + 3, 0, numberOfColumn - 1)].SetActive(true);
+        }
+
+        public void UpdateRevealedCubes(int pos)
+        {
+            if (numberOfBomb[pos] == 0)
+            {
+                var posY = Mathf.FloorToInt(pos / numberOfColumn);
+                var posX = Mathf.FloorToInt((pos - (posY * numberOfCubesPerRow * numberOfCubesPerRow)) / numberOfCubesPerRow);
+                var posZ = pos - (posY * numberOfCubesPerRow * numberOfCubesPerRow) - (posX * numberOfCubesPerRow);
+
+                if (posZ + 1 < numberOfCubesPerRow)
+                    cubeList[pos + 1].GetComponent<OnTriggerEnterColorChange>().ColorChange();
+                if (posZ > 0)
+                    cubeList[pos - 1].GetComponent<OnTriggerEnterColorChange>().ColorChange();
+
+                if (posX + 1 < numberOfCubesPerRow)
+                    cubeList[pos + numberOfCubesPerRow].GetComponent<OnTriggerEnterColorChange>().ColorChange();
+                if (posX > 0)
+                    cubeList[pos - numberOfCubesPerRow].GetComponent<OnTriggerEnterColorChange>().ColorChange();
+                if (posY > 0)
+                {
+                    cubeList[pos - (numberOfCubesPerRow * numberOfCubesPerRow)].GetComponent<OnTriggerEnterColorChange>().ColorChange();
+                }
+                if (posY + 1 < numberOfColumn)
+                {
+                    cubeList[pos + (numberOfCubesPerRow * numberOfCubesPerRow)].GetComponent<OnTriggerEnterColorChange>().ColorChange();
+                }
+            }
         }
     }
 }

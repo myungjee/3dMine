@@ -10,5 +10,6 @@ namespace cubepuzzle
 
         Vector3 StartingPosition();
         void MoveDown();
+        void UpdateRevealedCubes(int pos);
     }
 }

@@ -25,6 +25,7 @@ namespace cubepuzzle
             CurrentPosition = new ReactiveProperty<int>();
 
             CurrentPosition.Value = 8;
+            cubeMaker.UpdateRevealedCubes(CurrentPosition.Value);
             Observable.EveryUpdate().Where(_ => Stat == Status.Normal && (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))).Subscribe(_ => MoveLeft());
             Observable.EveryUpdate().Where(_ => Stat == Status.Normal && (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))).Subscribe(_ => MoveBack());
             Observable.EveryUpdate().Where(_ => Stat == Status.Normal && (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))).Subscribe(_ => MoveRight());
@@ -40,6 +41,7 @@ namespace cubepuzzle
             {
                 CurrentPosition.Value += 1;
                 this.transform.position += new Vector3(0, 0, 1);
+                cubeMaker.UpdateRevealedCubes(CurrentPosition.Value);
             }
         }
         
@@ -49,6 +51,7 @@ namespace cubepuzzle
             {
                 CurrentPosition.Value -= cubeMaker.NumberOfCubesPerRow;
                 this.transform.position += new Vector3(-1, 0, 0);
+                cubeMaker.UpdateRevealedCubes(CurrentPosition.Value);
             }
         }
 
@@ -58,6 +61,7 @@ namespace cubepuzzle
             {
                 CurrentPosition.Value -= 1;
                 this.transform.position += new Vector3(0, 0, -1);
+                cubeMaker.UpdateRevealedCubes(CurrentPosition.Value);
             }
         }
 
@@ -67,6 +71,7 @@ namespace cubepuzzle
             {
                 CurrentPosition.Value += cubeMaker.NumberOfCubesPerRow;
                 this.transform.position += new Vector3(1, 0, 0);
+                cubeMaker.UpdateRevealedCubes(CurrentPosition.Value);
             }
         }
 
@@ -77,8 +82,9 @@ namespace cubepuzzle
 
         private void MoveDown()
         {
-            CurrentPosition.Value -= cubeMaker.NumberOfColumn;
+            CurrentPosition.Value += cubeMaker.NumberOfCubesPerRow * cubeMaker.NumberOfCubesPerRow;
             this.transform.position += new Vector3(0, 0, 0);
+            cubeMaker.UpdateRevealedCubes(CurrentPosition.Value);
         }
     }
 }

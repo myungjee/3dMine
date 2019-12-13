@@ -6,18 +6,23 @@ public class OnTriggerEnterColorChange : MonoBehaviour
 {
     private Renderer rend;
 
-    private void Start()
+    private void Awake()
     {
         rend = GetComponent<Renderer>();
 
-        rend.material.color = Color.black;
+        rend.material.color = new Color(0.056f, 0.056f, 0.056f);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            rend.material.color = Color.white;
+            ColorChange();
         }
+    }
+
+    public void ColorChange()
+    {
+        rend.material.color = Color.white;
     }
 }
